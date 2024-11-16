@@ -16,11 +16,11 @@ class Registration(generic.CreateView):
     template_name = 'registration/register.html'  # Исправлено: template_name вместо templates_name
     form_class = CustomUserCreationForm
     success_url = reverse_lazy('login')  # Переход после успешной регистрации, например, на страницу входа
-
+    
 # Вход
 class Login(View):
     template_name = 'registration/login.html'
-    form_class = LoginForm
+    #form_class = LoginForm
 
     def get(self, request):
         form = LoginForm()

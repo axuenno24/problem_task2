@@ -1,8 +1,9 @@
 from idlelib.query import CustomRun
 from django import forms
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
-
+from django.views.generic import CreateView, UpdateView
+#from .models import user_registrated
 from .models import CustomUser
 
 
@@ -17,18 +18,19 @@ class CustomUserCreationForm(forms.ModelForm):
     last_name = forms.CharField(required=True,max_length=50, widget=forms.TextInput(attrs={'placeholder':'Фамилия'}))
     consent = forms.BooleanField(required=True, label='Согласие на обработку персональных данных',widget=forms.CheckboxInput())
 
-    class Meta:
-        model = CustomUser
-        fields = ("username", "first_name", "last_name", "email")
-
-
     def save(self, commit=True):
         user = super().save(commit=False)
         user.set_password(self.cleaned_data.get("password"))
+        user.is_active=False
+        user.is_activated=False
         if commit:
             user.save()
+            #user_registrated.send(CustomUser, instance=user)
         return user
 
+    class Meta:
+        model = CustomUser
+        fields = ("username", "first_name", "last_name", "email")
 
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=100,widget=forms.TextInput(attrs={'placeholder': 'Введите имя пользователя'}))
@@ -36,15 +38,10 @@ class LoginForm(forms.Form):
     template_name = 'registration/profile.html'
 
 class Registration(CreateView):
-     model = CustomUser  # Укажите модель
-     template_name = 'registration/register.html'
-     success_url = reverse_lazy('login')  # URL для перенаправления после успешной регистрации
-     fields = ['username', 'password', 'email']  # Поля формы
-
-class ProfileForm(forms.ModelForm):
-    class Meta:
-        model = CustomUser
-        fields = ['first_name', 'last_name', 'email']  # Здесь только поля, которые можно редактировать
+      model = CustomUser  # Укажите модель
+      template_name = 'registration/register.html'
+      success_url = reverse_lazy('design:login')  # URL для перенаправления после успешной регистрации
+      fields = ['username', 'password', 'email']  # Поля формы
 
 
 

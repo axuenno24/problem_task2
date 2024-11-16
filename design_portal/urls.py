@@ -24,5 +24,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('design/', include('design.urls')),  # Подключаем urls из приложения design
     path('', RedirectView.as_view(url='/design/')),
+    path('catalog/', RedirectView.as_view(url='', permanent=True)),
 ]  + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
