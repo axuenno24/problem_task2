@@ -4,7 +4,10 @@ from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
 from django.views import generic, View
 from django.urls import reverse_lazy
-from .forms import LoginForm, CustomUserCreationForm
+from .forms import LoginForm, CustomUserCreationForm, DesignCategoryForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+from .models import DesignCategory
 
 
 # Главная страница
@@ -62,3 +65,22 @@ def profile(request):
         form = CustomUserCreationForm(instance=user)  # Инициализация формы с данными пользователя
 
     return render(request, 'registration/profile.html', {'form': form})
+
+class DesignRequestCreateView(LoginRequiredMixin, generic.CreateView):
+    model = DesignCategory
+    form_class =  DesignCategoryForm
+    template_name = 'registration/design_request_create.html'
+    success_url = '/registration/profile/'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+class CreatingAppProfileView(LoginRequiredMixin, generic.ListView):
+    model = DesignCategory
+    template_name = 'registration/design_request_list.html'
+    context_object_name = 'design_requests'
+    success_url = '/registration/profile/'
+
+    def get_queryset(self):
+        return DesignCategory.objects.filter(user=self.request.user) # Нужно чтобы пользователь видел только свои заявки, а не с базы данных

@@ -1,0 +1,13 @@
+{% extends 'base_generic.html' %}
+
+{% block title %}Заявка{% endblock %}
+
+
+{% block design_request %}
+<h1>Создание заявки на дизайн интерьера</h1>
+<form class="d-flex flex-column align-items-center" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-warning" type="submit">Добавить заявку</button>
+</form>
+{% endblock %}

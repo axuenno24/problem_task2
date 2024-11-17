@@ -4,7 +4,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView
 #from .models import user_registrated
-from .models import CustomUser
+from .models import CustomUser, DesignCategory
+from django.core.validators import FileExtensionValidator
 
 
 
@@ -44,4 +45,12 @@ class Registration(CreateView):
       fields = ['username', 'password', 'email']  # Поля формы
 
 
+class DesignCategoryForm(forms.ModelForm):
+    title = forms.CharField(max_length=100, label='', widget=forms.TextInput(attrs={'placeholder': 'Название заявки'}))
+    description = forms.CharField(label='',widget=forms.Textarea(attrs={'placeholder': 'Описание заявки' }))
+    photos = forms.FileField(label="",widget=forms.FileInput(), validators=[FileExtensionValidator(allowed_extensions=['png', 'jpg', 'jpeg', 'bmp'])])
+
+    class Meta:
+        model = DesignCategory
+        fields = ("photos", "category", "description", "title")
 
